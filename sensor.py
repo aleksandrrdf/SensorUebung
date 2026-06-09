@@ -137,7 +137,7 @@ def classify_value(value: float, limits: dict) -> str:
     """
     # TODO: Implementierung hier einfügen
     pass
-
+#test
 
 def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
     """Filtert die Messdaten nach einer bestimmten Sensor-ID.
