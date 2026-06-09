@@ -44,8 +44,22 @@ def load_data(filename: str) -> list[dict]:
         >>> print(daten[0]["temperatur"])
         19.2
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    try:
+        with open(filename, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            results: list[dict] = []
+            for row in reader:
+                # Konvertiere numerische Felder in float, falls möglich
+                for key in ("temperatur", "luftfeuchtigkeit", "co2"):
+                    if key in row and row[key] != "":
+                        try:
+                            row[key] = float(row[key])
+                        except ValueError:
+                            row[key] = None
+                results.append(row)
+        return results
+    except Exception:
+        return []
 
 
 def calculate_average(values: list[float]) -> float:
@@ -137,7 +151,7 @@ def classify_value(value: float, limits: dict) -> str:
     """
     # TODO: Implementierung hier einfügen
     pass
-#test
+
 
 def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
     """Filtert die Messdaten nach einer bestimmten Sensor-ID.
