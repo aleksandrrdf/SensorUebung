@@ -18,7 +18,7 @@ Datenformat (eine Zeile aus messdaten.csv als dict):
 """
 
 import csv
-
+#Fabian
 
 # ──────────────────────────────────────────────────────────────
 # PERSON A
