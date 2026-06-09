@@ -25,27 +25,19 @@ import csv
 # ──────────────────────────────────────────────────────────────
 
 def load_data(filename: str) -> list[dict]:
-    """Liest eine CSV-Datei mit Messdaten ein und gibt sie als Liste zurück.
-
-    Jede Zeile der CSV wird in ein dict umgewandelt.
-    Numerische Felder (temperatur, luftfeuchtigkeit, co2) werden
-    automatisch in float konvertiert.
-
-    Args:
-        filename: Pfad zur CSV-Datei (z. B. "data/messdaten.csv")
-
-    Returns:
-        Liste von dicts, eines pro Zeile. Leere Liste bei Fehler.
-
-    Beispiel:
-        >>> daten = load_data("data/messdaten.csv")
-        >>> print(daten[0]["sensor_id"])
-        S01
-        >>> print(daten[0]["temperatur"])
-        19.2
-    """
-    # TODO: Implementierung hier einfügen
-    pass
+    try:
+        data = []
+        with open(filename, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # Konvertiere numerische Felder zu float
+                row['temperatur'] = float(row['temperatur'])
+                row['luftfeuchtigkeit'] = float(row['luftfeuchtigkeit'])
+                row['co2'] = float(row['co2'])
+                data.append(row)
+        return data
+    except Exception:
+        return []
 
 
 def calculate_average(values: list[float]) -> float:
