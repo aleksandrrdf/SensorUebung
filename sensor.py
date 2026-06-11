@@ -77,8 +77,10 @@ def calculate_average(values: list[float]) -> float:
         >>> calculate_average([19.2, 21.4, 24.7])
         21.77
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    numeric_values = [value for value in values if value is not None]
+    if not numeric_values:
+        return 0.0
+    return round(sum(numeric_values) / len(numeric_values), 2)
 
 
 def find_extremes(values: list[float]) -> tuple[float, float]:
@@ -94,8 +96,10 @@ def find_extremes(values: list[float]) -> tuple[float, float]:
         >>> find_extremes([19.2, 21.4, 24.7, 17.5])
         (17.5, 24.7)
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    numeric_values = [value for value in values if value is not None]
+    if not numeric_values:
+        return (0.0, 0.0)
+    return (min(numeric_values), max(numeric_values))
 
 
 def count_above_threshold(values: list[float], threshold: float) -> int:
@@ -112,8 +116,7 @@ def count_above_threshold(values: list[float], threshold: float) -> int:
         >>> count_above_threshold([19.2, 27.1, 24.7, 33.2, 21.4], 25.0)
         2
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    return sum(1 for value in values if value is not None and value > threshold)
 
 
 # ──────────────────────────────────────────────────────────────
@@ -149,8 +152,15 @@ def classify_value(value: float, limits: dict) -> str:
         >>> classify_value(35.0, grenzen)
         'kritisch'
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    if value is None:
+        return "kritisch"
+    if value <= limits["niedrig"]:
+        return "niedrig"
+    if value <= limits["normal"]:
+        return "normal"
+    if value <= limits["hoch"]:
+        return "hoch"
+    return "kritisch"
 
 
 def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
@@ -170,8 +180,7 @@ def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
         >>> all(d["sensor_id"] == "S01" for d in s01)
         True
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    return [entry for entry in data if entry.get("sensor_id") == sensor_id]
 
 
 def generate_report(data: list[dict]) -> str:
@@ -203,6 +212,50 @@ def generate_report(data: list[dict]) -> str:
         ...
         ======================================
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    def format_value(value: float | None) -> str:
+        if value is None:
+            return "-"
+        return f"{value:.2f}".rstrip("0").rstrip(".") or "0"
+
+    def summarize(values: list[float | None]) -> tuple[str, str]:
+        clean_values = [value for value in values if value is not None]
+        if not clean_values:
+            return ("-", "-")
+        average = calculate_average(clean_values)
+        minimum, maximum = find_extremes(clean_values)
+        return (format_value(average), f"{format_value(minimum)} / {format_value(maximum)}")
+
+    temperatures = [entry.get("temperatur") for entry in data if entry.get("temperatur") is not None]
+    humidity = [entry.get("luftfeuchtigkeit") for entry in data if entry.get("luftfeuchtigkeit") is not None]
+    co2 = [entry.get("co2") for entry in data if entry.get("co2") is not None]
+    sensor_ids = [entry.get("sensor_id") for entry in data if entry.get("sensor_id")]
+    unique_sensors = []
+    for sensor_id in sensor_ids:
+        if sensor_id not in unique_sensors:
+            unique_sensors.append(sensor_id)
+
+    temp_avg, temp_range = summarize(temperatures)
+    humidity_avg, humidity_range = summarize(humidity)
+    co2_avg, co2_range = summarize(co2)
+
+    lines = [
+        "========== SensorPy Bericht ==========",
+        f"Messungen total:       {len(data)}",
+        f"Sensoren:              {', '.join(unique_sensors)}",
+        "",
+        "-- Temperatur (°C) --",
+        f"Durchschnitt:          {temp_avg}",
+        f"Min / Max:             {temp_range}",
+        f"Kritische Werte (>30): {count_above_threshold(temperatures, 30.0)}",
+        "",
+        "-- Luftfeuchtigkeit (%) --",
+        f"Durchschnitt:          {humidity_avg}",
+        f"Min / Max:             {humidity_range}",
+        "",
+        "-- CO2 (ppm) --",
+        f"Durchschnitt:          {co2_avg}",
+        f"Min / Max:             {co2_range}",
+        "=" * 37,
+    ]
+    return "\n".join(lines)
 
