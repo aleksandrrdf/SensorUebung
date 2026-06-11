@@ -124,8 +124,7 @@ def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
         >>> all(d["sensor_id"] == "S01" for d in s01)
         True
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    return [entry for entry in data if entry.get("sensor_id") == sensor_id]
 
 
 def generate_report(data: list[dict]) -> str:
@@ -157,6 +156,52 @@ def generate_report(data: list[dict]) -> str:
         ...
         ======================================
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    def format_value(value: float | None) -> str:
+        if value is None:
+            return "-"
+        return f"{value:.2f}".rstrip("0").rstrip(".") or "0"
+
+    def summarize(values: list[float | None]) -> tuple[str, str]:
+        clean_values = [value for value in values if value is not None]
+        if not clean_values:
+            return "-", "-"
+
+        average = calculate_average(clean_values)
+        minimum, maximum = find_extremes(clean_values)
+        return format_value(average), f"{format_value(minimum)} / {format_value(maximum)}"
+
+    temperatures = [entry.get("temperatur") for entry in data if entry.get("temperatur") is not None]
+    humidity = [entry.get("luftfeuchtigkeit") for entry in data if entry.get("luftfeuchtigkeit") is not None]
+    co2 = [entry.get("co2") for entry in data if entry.get("co2") is not None]
+
+    sensor_ids: list[str] = []
+    for entry in data:
+        sensor_id = entry.get("sensor_id")
+        if sensor_id and sensor_id not in sensor_ids:
+            sensor_ids.append(sensor_id)
+
+    temp_avg, temp_range = summarize(temperatures)
+    humidity_avg, humidity_range = summarize(humidity)
+    co2_avg, co2_range = summarize(co2)
+
+    lines = [
+        "========== SensorPy Bericht ==========",
+        f"Messungen total:       {len(data)}",
+        f"Sensoren:              {', '.join(sensor_ids)}",
+        "",
+        "-- Temperatur (°C) --",
+        f"Durchschnitt:          {temp_avg}",
+        f"Min / Max:             {temp_range}",
+        f"Kritische Werte (>30): {count_above_threshold(temperatures, 30.0)}",
+        "",
+        "-- Luftfeuchtigkeit (%) --",
+        f"Durchschnitt:          {humidity_avg}",
+        f"Min / Max:             {humidity_range}",
+        "",
+        "-- CO2 (ppm) --",
+        f"Durchschnitt:          {co2_avg}",
+        f"Min / Max:             {co2_range}",
+        "=" * 37,
+    ]
+    return "\n".join(lines)
 
