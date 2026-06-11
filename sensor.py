@@ -62,8 +62,7 @@ def count_above_threshold(values: list[float], threshold: float) -> int:
         >>> count_above_threshold([19.2, 27.1, 24.7, 33.2, 21.4], 25.0)
         2
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    return sum(1 for value in values if value > threshold)
 
 
 # ──────────────────────────────────────────────────────────────
@@ -99,8 +98,13 @@ def classify_value(value: float, limits: dict) -> str:
         >>> classify_value(35.0, grenzen)
         'kritisch'
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    if value < limits["niedrig"]:
+        return "niedrig"
+    if value < limits["normal"]:
+        return "normal"
+    if value < limits["hoch"]:
+        return "hoch"
+    return "kritisch"
 
 
 def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
