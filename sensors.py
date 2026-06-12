@@ -124,8 +124,7 @@ def filter_by_sensor(data: list[dict], sensor_id: str) -> list[dict]:
         >>> all(d["sensor_id"] == "S01" for d in s01)
         True
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    return [row for row in data if row.get("sensor_id") == sensor_id]
 
 
 def generate_report(data: list[dict]) -> str:
@@ -157,6 +156,40 @@ def generate_report(data: list[dict]) -> str:
         ...
         ======================================
     """
-    # TODO: Implementierung hier einfügen
-    pass
+    if not data:
+        return "Keine Messdaten vorhanden."
+
+    temperatur = [row["temperatur"] for row in data]
+    luftfeuchtigkeit = [row["luftfeuchtigkeit"] for row in data]
+    co2 = [row["co2"] for row in data]
+    sensor_ids = sorted(set(row["sensor_id"] for row in data))
+
+    def stats(values: list[float]) -> tuple[float, float, float]:
+        return round(sum(values) / len(values), 2), min(values), max(values)
+
+    temp_avg, temp_min, temp_max = stats(temperatur)
+    humid_avg, humid_min, humid_max = stats(luftfeuchtigkeit)
+    co2_avg, co2_min, co2_max = stats(co2)
+    kritische_temp = count_above_threshold(temperatur, 30.0)
+
+    report_lines = [
+        "========== SensorPy Bericht ==========",
+        f"Messungen total:       {len(data)}",
+        f"Sensoren:              {', '.join(sensor_ids)}",
+        "",
+        "-- Temperatur (°C) --",
+        f"Durchschnitt:          {temp_avg}",
+        f"Min / Max:             {temp_min} / {temp_max}",
+        f"Kritische Werte (>30): {kritische_temp}",
+        "",
+        "-- Luftfeuchtigkeit (%) --",
+        f"Durchschnitt:          {humid_avg}",
+        f"Min / Max:             {humid_min} / {humid_max}",
+        "",
+        "-- CO2 (ppm) --",
+        f"Durchschnitt:          {co2_avg}",
+        f"Min / Max:             {co2_min} / {co2_max}",
+        "======================================",
+    ]
+    return "\n".join(report_lines)
 
