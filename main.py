@@ -1,7 +1,7 @@
 """
 SensorPy – Hauptprogramm
 =========================
-Dieses Skript ruft alle Funktionen aus sensors.py auf und zeigt
+Dieses Skript ruft alle Funktionen aus sensor.py auf und zeigt
 die Ergebnisse an. Ihr könnt es jederzeit ausführen, um zu testen,
 ob eure Implementierungen korrekt funktionieren.
 
@@ -9,7 +9,7 @@ Ausführen:
     python main.py
 """
 
-from sensors import (
+from sensor import (
     load_data,
     calculate_average,
     find_extremes,

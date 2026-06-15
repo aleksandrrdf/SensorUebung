@@ -11,7 +11,7 @@ Ihr implementiert gemeinsam ein Analyse-Tool, das diese Daten einliest, auswerte
 
 ```
 sensorpy/
-├── sensors.py          ← Hier implementiert ihr die Funktionen
+├── sensor.py           ← Hier implementiert ihr die Funktionen
 ├── main.py             ← Testprogramm (nicht verändern)
 └── data/
     └── messdaten.csv   ← Beispieldaten (nicht verändern)

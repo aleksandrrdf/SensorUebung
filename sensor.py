@@ -25,27 +25,33 @@ import csv
 # ──────────────────────────────────────────────────────────────
 
 def load_data(filename: str) -> list[dict]:
+    data = []
     try:
-        data = []
         with open(filename, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                # Konvertiere numerische Felder zu float
-                row['temperatur'] = float(row['temperatur'])
-                row['luftfeuchtigkeit'] = float(row['luftfeuchtigkeit'])
-                row['co2'] = float(row['co2'])
+                try:
+                    row['temperatur'] = float(row['temperatur'])
+                    row['luftfeuchtigkeit'] = float(row['luftfeuchtigkeit'])
+                    row['co2'] = float(row['co2'])
+                except (TypeError, ValueError):
+                    continue
                 data.append(row)
-        return data
-    except Exception:
+    except FileNotFoundError:
         return []
+    return data
 
 
 def calculate_average(values: list[float]) -> float:
+    if not values:
+        return 0.0
     return round(sum(values) / len(values), 2)
 
 
 def find_extremes(values: list[float]) -> tuple[float, float]:
-    return (min(values), max(values))
+    if not values:
+        return 0.0, 0.0
+    return min(values), max(values)
 
 
 def count_above_threshold(values: list[float], threshold: float) -> int:
